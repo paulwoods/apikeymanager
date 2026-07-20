@@ -89,11 +89,34 @@ configuration.
 
 ### Backend
 
-- Spring Boot 4.0.3 (Java 17+ baseline, verified compatible through Java 26)
-- **Target Java 25 LTS**, compiled on the installed JDK 26
+**Spring Boot 4.1.0** — current GA release. Requires Java 17 minimum, compatible through
+Java 26. **Target Java 25 LTS**, compiled on the installed JDK 26.
+
+Versions below are managed by the `spring-boot-dependencies:4.1.0` BOM — read from the
+published POM, not assumed. Do not pin them individually.
+
+| Dependency | Version |
+|---|---|
+| Spring Framework | 7.0.8 |
+| Spring Security | 7.1.0 |
+| Hibernate | 7.4.1.Final |
+| Flyway | 12.4.0 |
+| Testcontainers | **2.0.5** |
+| PostgreSQL JDBC | 42.7.11 |
+| Tomcat | 11.0.22 |
+
+Two version traps, both verified against docs rather than memory:
+
+- **Testcontainers 2.x renamed the Maven artifact.** It is
+  `org.testcontainers:testcontainers-postgresql`, *not* the 1.x `org.testcontainers:postgresql`.
+  The class remains `org.testcontainers.containers.PostgreSQLContainer`. Nearly every
+  example online is 1.x and will fail to resolve.
+- **`@UuidGenerator(style = TIME)` is UUIDv1, not v7.** Use `style = VERSION_7`.
+  Confirmed available in Hibernate 7.4.
+
+Also:
+
 - PostgreSQL + Flyway migrations
-- Hibernate with `@UuidGenerator(style = VERSION_7)` — time-ordered, index-friendly.
-  Note: `style = TIME` is UUIDv1, *not* v7.
 - Errors as RFC 9457 `ProblemDetail`
 - List endpoints paginated (`page` / `size`, default 20)
 
@@ -123,7 +146,7 @@ Mocks cannot test the riskiest logic here, so it is covered against a real datab
 
 | Layer | Tools |
 |---|---|
-| Backend integration | Testcontainers Postgres via `@ServiceConnection`, Flyway-migrated |
+| Backend integration | Testcontainers 2.x Postgres via `@ServiceConnection`, Flyway-migrated |
 | Backend unit | Key generation, expiry-ceiling validation |
 | Frontend | Vitest + React Testing Library + MSW at the network layer |
 
