@@ -105,14 +105,23 @@ published POM, not assumed. Do not pin them individually.
 | PostgreSQL JDBC | 42.7.11 |
 | Tomcat | 11.0.22 |
 
-Two version traps, both verified against docs rather than memory:
+Traps confirmed by actually building the scaffold, not by reading:
 
-- **Testcontainers 2.x renamed the Maven artifact.** It is
-  `org.testcontainers:testcontainers-postgresql`, *not* the 1.x `org.testcontainers:postgresql`.
-  The class remains `org.testcontainers.containers.PostgreSQLContainer`. Nearly every
-  example online is 1.x and will fail to resolve.
+- **Spring Boot 4 renamed the starters.** It is `spring-boot-starter-webmvc`, *not*
+  `spring-boot-starter-web`. Flyway has its own `spring-boot-starter-flyway`. The single
+  `spring-boot-starter-test` is gone, replaced by per-feature test starters
+  (`spring-boot-starter-data-jpa-test`, `spring-boot-starter-webmvc-test`, …).
+  Generate from Initializr rather than hand-writing a POM.
+- **Testcontainers 2.x moved both the artifact and the package.** Artifact is
+  `org.testcontainers:testcontainers-postgresql` (1.x: `org.testcontainers:postgresql`);
+  class is `org.testcontainers.postgresql.PostgreSQLContainer`
+  (1.x: `org.testcontainers.containers.PostgreSQLContainer`), and is no longer generic.
+  Nearly every example online is 1.x and fails on both counts.
+- **Initializr emits `<version>4.1.0.RELEASE</version>`, which does not resolve.** The
+  published artifact is plain `4.1.0`; the `.RELEASE` suffix is a Boot 1.x/2.x convention.
+  Fix the parent version by hand after generating.
 - **`@UuidGenerator(style = TIME)` is UUIDv1, not v7.** Use `style = VERSION_7`.
-  Confirmed available in Hibernate 7.4.
+  Confirmed available in Hibernate 7.4.1.
 
 Also:
 

@@ -1,0 +1,27 @@
+# Local development only.
+#
+# Credentials here are deliberately trivial and must stay that way — this repository is
+# public. Nothing in this file is used outside a developer machine.
+#
+# The postgres image must stay in step with TestcontainersConfiguration.POSTGRES_IMAGE in
+# the backend, so tests and local runs exercise the same engine.
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: apikeymanager-postgres
+    environment:
+      POSTGRES_DB: apikeymanager
+      POSTGRES_USER: apikeymanager
+      POSTGRES_PASSWORD: localdev
+    ports:
+      - "5432:5432"
+    volumes:
+      - apikeymanager-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U apikeymanager -d apikeymanager"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  apikeymanager-pgdata:
