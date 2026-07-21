@@ -14,7 +14,9 @@ services:
       POSTGRES_USER: apikeymanager
       POSTGRES_PASSWORD: localdev
     ports:
-      - "5432:5432"
+      # 5433 on the host: 5432 is commonly already taken by another project's Postgres.
+      # The container still listens on 5432 internally.
+      - "5433:5432"
     volumes:
       - apikeymanager-pgdata:/var/lib/postgresql/data
     healthcheck:
